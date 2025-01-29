@@ -1,114 +1,160 @@
+import { Poppins } from "next/font/google";
 import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+import Day from "@/component/day";
+import Month from "@/component/month";
+import Year from "@/component/year";
+import { useEffect, useState } from "react";
+import moment from "moment"
+const poppins = Poppins({
+  weight: ["400", "900"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
-export default function Home() {
+const Home = () => {
+  const [year, setYear] = useState("") 
+  const [month, setMonth] = useState("")
+  const [day, setDay] = useState("")
+
+  const[yearMessage, setYearMessage] = useState("")
+  const[monthMessage, setMonthMessage] = useState("")
+  const[dayMessage, setDayMessage] = useState("")
+
+  const[isError, setIsError] = useState(false)
+
+  const [age, setAge] = useState({
+    day:"--",
+    month:"--",
+    year:"--"
+  })
+  
+  useEffect(()=>{
+    console.log("year",year);
+    
+  },[year,month,day])
+
+  function clickHandler(){
+    const isError = validateInput()
+
+    if(!isError){
+      calculateDate()
+    }
+  }
+
+  function calculateDate(){
+    
+  const inputDate = moment().year(year).month(month).date(day)
+  const nowDate = moment()
+  
+  const calculatedDate = moment.duration(nowDate.diff(inputDate))
+    console.log("calculatedDate",calculatedDate);
+    
+
+  setAge({
+    day:calculatedDate.days(),
+    month:calculatedDate.months(),
+    year:calculatedDate.years()
+  })
+  }
+
+  
   return (
-    <div
-      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/pages/index.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className=" min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-xl gap-6 rounded-xl rounded-br-[8rem] bg-white p-6 py-10 md:gap-0 md:p-10 ">
+        <div className="gird grid-rows-3">
+          <div className="grid grid-cols-4 gap-6 w-full ">
+            <Day setDayFunc={setDay} dayMessageDisplay={dayMessage} />
+            <Month setMonthFunc={setMonth} monthMessageDisplay={monthMessage} />
+            <Year setYearFunc={setYear} yearMessageDisplay={yearMessage}/>
+          </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          <div className="relative mb-2 mt-3 flex w-full justify-center sm:justify-end">
+            <div className="absolute top-1/2 h-px w-full -translate-y-1/2 transform bg-[#dbdbdb]"></div>
+            <button
+              type="button"
+              className="z-10 flex flex-col rounded-full bg-[#854dff] z-5 p-5 hover:bg-black transition-colors duration-250"
+              onClick={clickHandler}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="34"
+                height="32"
+                viewBox="0 0 46 44"
+              >
+                <g fill="none" stroke="#FFF" strokeWidth="2">
+                  <path d="M1 22.019C8.333 21.686 23 25.616 23 44M23 44V0M45 22.019C37.667 21.686 23 25.616 23 44" />
+                </g>
+              </svg>
+            </button>
+          </div>
+          <div className="flex gap-2 font-extrabold italic text-5xl sm:text-6xl">
+            <div className="flex flex-col tracking-[.15em]">
+              <div className="text-center text-[#854dff] w-full ">{age.year}</div>
+              <div className="text-center text-[#854dff] w-full ">{age.month}</div>
+              <div className="text-center text-[#854dff] w-full ">{age.day}</div>
+            </div>
+              <div className="flex flex-col">
+                <div>years</div>
+                <div>month</div>
+                <div>days</div>
+              </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
   );
-}
+
+
+  function validateInput(){
+    let isError = false
+    if(!day){
+      isError = true
+      setDayMessage("This field is required.")
+    }
+    if(!month){
+      isError = true
+      setMonthMessage("This field is required.")
+    }
+    if(!year){
+      isError = true
+      setYearMessage("This field is required.")
+    }
+  
+    if ( parseInt(day) < 1 || parseInt(day) > 31) {
+      isError = true
+      setDayMessage("Must be a valid date.")
+    }
+  
+    if (parseInt(month) < 1 || parseInt(month) > 12) {
+      isError = true
+      setMonthMessage("Must be a valid month.")
+    }
+  
+    const inputDate = moment().year(year).month(month).date(day)
+    const nowDate = moment()
+  
+    
+    if(!inputDate.isValid()){
+      isError = true
+      setDayMessage("Must be a valid date.")
+      
+    }
+  
+    if(inputDate.diff(nowDate) > 0){
+      isError = true
+      setYearMessage("Must be in the past.")
+    }
+
+    if(!isError){
+      setDayMessage("")
+      setMonthMessage("")
+      setYearMessage("")
+    }
+    return isError
+  }
+};
+
+
+export default Home;
